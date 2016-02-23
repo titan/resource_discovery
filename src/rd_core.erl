@@ -94,9 +94,13 @@ make_callbacks(NewResources) ->
 filter_resource_tuples_by_types(TargetTypes, Resources) ->
   Fun =
     fun({Type, _Instance} = Resource, Acc) ->
-        case lists:member(Type, TargetTypes) of
-          true  -> [Resource|Acc];
-          false -> Acc
+        case lists:member(all, TargetTypes) of
+          true -> [Resource|Acc];
+          false ->
+            case lists:member(Type, TargetTypes) of
+              true  -> [Resource|Acc];
+              false -> Acc
+            end
         end
     end,
   lists:foldl(Fun, [], Resources).
