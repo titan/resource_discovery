@@ -340,14 +340,12 @@ ping_contact_nodes(Nodes, Timeout) ->
 rpc_call(Type, Module, Function, Args, Timeout) ->
   case get_resource(Type) of
     {ok, Resource} ->
-      error_logger:info_msg("got a resource ~p", [Resource]),
       case rpc:call(Resource, Module, Function, Args, Timeout) of
         {badrpc, Reason} ->
           error_logger:info_msg("got a badrpc ~p", [Reason]),
           delete_resource_tuple({Type, Resource}),
           rpc_call(Type, Module, Function, Args, Timeout);
         Reply ->
-          error_logger:info_msg("result of rpc was ~p", [Reply]),
           Reply
       end;
     {error, not_found} -> {error, not_found}
@@ -368,7 +366,6 @@ rpc_multicall(Type, Module, Function, Args, Timeout) ->
   case get_resources(Type) of
     [] -> {error, no_resources};
     Resources ->
-      error_logger:info_msg("got resources ~p", [Resources]),
       {Resl, BadNodes} = rpc:multicall(Resources, Module, Function, Args, Timeout),
       [delete_resource_tuple({Type, BadNode}) || BadNode <- BadNodes],
       {Resl, BadNodes}
