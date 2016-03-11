@@ -34,7 +34,6 @@ do_until(F, [H|T]) ->
 %% @doc Pings a node and returns only after the net kernal distributes the nodes.
 -spec sync_ping(node(), timeout()) -> pang | pong.
 sync_ping(Node, Timeout) ->
-  error_logger:info_msg("pinging node: ~p", [Node]),
   case net_adm:ping(Node) of
     pong ->
       Resp =
@@ -93,7 +92,6 @@ get_env(Key, Default) ->
 get_remote_nodes(Node) ->
   try
     Nodes = rpc:call(Node, erlang, nodes, []),
-    error_logger:info_msg("contact node has ~p", [Nodes]),
     Nodes
   catch
     _C:E ->
